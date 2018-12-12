@@ -1,0 +1,138 @@
+Networking and Expansion Stack Definition
+
+8 Bit is only used as an example here. 32-Bit will be used in the full system.
+
+
+
+Expansion Port
+
+________________________________________________________________________________
+Expansion ports are designed to arbitrarily store data, and use them. They are single data lane devices, meaning that only one address can be read at a time. While device Hubs are not built officially into the documentation for them, it would be theoretically possible. More on that below.
+
+The Expansion Port is to be designed as an acting singular device. Similar to a two lane networking system r1. The difference is that data can be sent to "devices" arbitrarily, and doesn't have to conform to any standard. In a r3 networking port, there are data standards that must be met. Expansion port R1/C1 is meant to be a simple port. It can be used to communicate with data storage, or maybe a device such as an advanced ALU. It is up to the user to create a device to interface with it. There is a "report" or error lane that can be used to communicate messages back to the computer. It cannot be used to communicate with the device, and is NOT meant to be used as a way to report multiple pieces of data at the same time. Success messages may also be relayed.
+
+Concept 1:
+	4 Data Lanes
+	1 Address Lane - The Last Bit will be used as a Write Activator. I.E. in an 8 Bit system, if bit 8 is enabled, then writing is enabled, similar to a clock. 
+	1 Write Lane
+	1 Read Lane
+	1 Report Lane
+
+The Address Lane is simple. It tells the device where it will be read from / written to. If the device creator so wishes, each address doesn't have to be writable or readable by nature. A subset of addresses can be offered. If the device has a lane that may not be written to or read from, you can report an error message through the "Report" lane. There are various default messages:
+
+	Standard Errors:
+	0000 0000 - No Error
+	0000 0001 - Value Written
+	0000 0010 - Value may not be Read
+	0000 0011 - Value may not be Written to
+	0000 0100 - (Generic) Value not Accessible
+	0000 0101 - Address does not exist
+	
+	Device Errors:
+	0000 0000 - No Error	
+	0001 0000 - Incorrect Type
+	0010 0000 - Inconclusive Result
+	0011 0000 - Currently Operating
+	0100 0000 - Bad Data
+	0101 0000 - (Generic) Something Broke
+	0110 0000 - Operation Successful
+
+As you can see, Device Errors and Standard Errors are segmented into the left halves and right halves of the 8 Bit Word (Keep in mind the full design will be 32 bit, this will simply use the last few bits of the lane instead). This design allows you to report multiple errors at once, or multiple items. Let's say you have a Calculator device: there are two addresses to write to. It can add two numbers together on address 0x0001 and 0x0000. If you attempt to write to address 0x0002, the device could possibly report the error code 0101 0101. Something Broke, The Address doesn't Exist. An Open standard is important to making sure that everything can easily be understood.
+
+
+
+
+
+
+Networking
+________________________________________________________________________________
+Revision 1:
+	Two Lane
+	in
+	out
+		In Lane recieves Data
+		Out Lane sends out data
+	Both Lanes Are Considered a Register. Out is considered RO, In is RW.
+	
+
+OL = OutLane, IL = In Lane, PC# is Computer Number
+Ex. 
+	PC0 / PC1
+
+	PC0: $ 15 > OL
+		Write the number 15 to the Out Lane on PC0
+	PC1: $ IL+1 > OL
+		Write the value from In Lane + 1 to the Out Lane on PC1
+	PC0: $ IL > 0x0001
+		Write the value from In Lane to RAM Address 0x0001 on PC0
+
+_________________________________________________________________________________
+Revision 2:
+	Four Lane
+	In0
+	In1
+	Out0
+	Out1
+
+	In Lane Two is Dedicated to Metadata. Metadata contains the "IP" of the device the message was recieved from.
+	Out Lane Two is Dedicated to Metadata. Metadata contains the "IP" of the device the message is sent to.
+
+	This Revision Two is meant to be used in combination with an internal ISP system that manages the destination and origin of Data. 
+
+	Assuming an 8 Bit System
+	PC0:
+		OL0: 0000 0011
+		OL1: 0000 0001
+	PC1:
+		IL0: 0000 0011
+		IL1: 0000 0000
+PC Zero intends to send the message "4" to the second computer on the network.
+PC One checks the In Lanes. It recieves the value "4", and knows that it is from the first computer on the network.
+
+All Computers should be hooked up to an ISP. The ISP determines the destination of the message recieved, and sends forward the data to the proper destination preserved.
+
+Due to the design of the networking stack, input is not needed to be read. It doesn't have to be acknowledged in order to recieve data. But, if you wish to save the data, it must be entered into RAM, as it is technically a register and has zero writing capabilities. You can also not execute the recieved data as code.
+
+________________________________________________________________________________
+Revision 3:
+	12 Lane
+	6  In
+	6  Out
+
+	Two Sets of Lanes	
+		Lane Out 0 - Data Lane
+		Lane Out 1 - Part Lane
+		Lane Out 2 - Meta Lane
+		Lane In 0 - Data Lane
+		Lane In 1 - Part Lane
+		Lane In 2 - Meta
+
+	The Data Lane in a set contains a piece of data - Text, Numbers, etc.
+	The Part Lane tells you which piece of the instruction the data is on.
+	The Meta Lane tells you what kind of data it is, and the address.
+	
+	Revision Three contains two "Sets", which means that it is a Twelve Lane system. This means two pieces of data can be recieved simultaneously. The point of the Part Data is to allow the system to understand how long the instruction is. 
+	Ex.
+		3 Lines, 8 Bit PC0
+		0000 0011 | The Number "4"
+		0000 0000 | Part Zero
+		0001 0001 | This data comes from the second computer on the network, and is a piece of text.
+
+		Since Lane one is data, it doesn't matter what goes in there.
+		Part allows the reciever to verify it recieves the data correctly. I.E. PC0 recieves part zero, and sends a confirmation back. PC1 recieves the confirmation, and sends part one. So on and so forth.
+		Meta Data tells you about the string sent. The first four bits are the data sent, in the order of: Text, Numbers, Confirmation, and Other. The next four bits are the address of the computer it will send to. When looking at the In Lane, this will be the address of the system the data was recieved from.
+
+
+		3 Lines, 8 Bit PC1
+
+		0000 0011 | The Number "4"
+		0000 0000 | Part Zero has been recieved
+		0001 0000 | It is a piece of Text from the first computer on the network.
+
+		0000 0001 | The Number sent will be whether or not the data has been recieved.
+		0000 0000 | Verify That Part Zero is what is being recieved.
+		0100 0000 | The Text is a Verification
+
+		This is what it looks like on the end of PC1.
+
+		The data is sent back on the second half of the instructions. When it is sent, PC0 waits for the confirmation code. If the code is zero, or the part is a different than the current instruction, it will stop, and resend. If the part is verified correctly, the next piece is sent from PC0. And the pattern continues.

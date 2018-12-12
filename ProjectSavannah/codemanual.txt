@@ -1,0 +1,95 @@
+6 Bit Operator
+	0: ZeroX 
+	1: InvrX
+	2: ZeroY
+	3: InvrY
+	4: AND / ADD
+		0: AND
+		1: ADD
+	5: Invert Output
+5 Bit Source 1
+5 Bit Source 2
+5 Bit Destination
+
+11 Bits IMM
+	20: SRC1 Src
+		0: Register
+		1: VALUE
+	21: SRC2 Src
+		0: Register
+		1: VALUE
+	22: Destination Type
+		0: Register
+		1: No Destination
+	23: JNE (Jump if Not Equal)
+	24: JEQ (Jump if Equal)
+	25: JLE (Jump if Less Than)
+	26: JGT (Jump if Greater Than)
+	27: Comparator
+		0: Value in SRC2
+		1: Value from SRC2 Source
+
+Writing and Reading arbitrary data is tricky, and strange. You have a total of 32 registers (each with 32 bits of storage), and RAM. RAM takes an input, and an address. The address will be read from the ARAM register. The RAM register is the current value of the address from ARAM. Due to the nature of RAM, only one input can be read at a time. 
+
+Register List:
+	 0: RAM
+	 1: ARAM,    RAM Address
+	 2: JMP,     Jump Value
+	 3: A,       Arbitrary
+	 4: B,       Arbitrary
+	 5: C,       Arbitrary
+	 6: D,       Arbitrary
+	 7: NDOUT0,  Network Data Out 0
+	 8: NPOUT0,  Network Part Out 0
+	 9: NMOUT0,  Network Meta Out 0
+	10: NDIN0,   Network Data In  0
+	11: NPIN0,   Network Part In  0
+	12: NMIN0,   Network Meta In  0
+	13: NDOUT1,  Network Data Out 1
+	14: NPOUT1,  Network Part Out 1
+	15: NMOUT1,  Network Meta Out 1
+	16: NDIN1,   Network Data In  1
+	17: NPIN1,   Network Part In  1
+	18: NMIN1,   Network Meta In  1
+	19: EXA0,    Expansion Address 0
+	20: EXW0,    Expansion Write   0
+	21: EXR0,    Expansion Read    0
+	22: EXP0,    Expansion Report  0
+	23: EXA1,    Expansion Address 1
+	24: EXW1,    Expansion Write   1
+	25: EXR1,    Expansion Read    1
+	26: EXP1,    Expansion Report  1
+	27: E,       Arbitrary
+	28: F,       Arbitrary
+	29: G,       Arbitrary
+	30: H,       Arbitrary
+	31: I,       Arbitrary
+A standard set of instructions would be:
+(each instruction is split into appropriate sections)
+> 00000000 011 00001 00000 00000 000101
+	Operation Zero X, and Zero Y, AND, to the destination Register 1 (ARAM), no comparison
+		This sets the ARAM register to the number zero.
+
+> 00000000 010 00010 00011 00010 010000
+	Operation ADD, Register 2 and Value Three, to the Register Two, No Comparison
+		This sets the JMP register to the number three.
+
+> 00000000 010 00011 00001 00011 010000
+	Operation ADD, Register 3 and Value One, to the Register 3, No comparison
+		This adds one to the current value of register three, an arbitrary register.
+		
+> 00000001 110 00011 01010 00011 000000
+	No Operation, Compare Register 3 with the Value Ten, if Not Equal, Jump to instruction three.
+		This will jump back to the third instruction (Adding to Reg3) until Register 3 is equal to the number ten.
+
+> 00000000 011 00000 00000 00000 000000
+	AND Register 0 (RAM, address ARAM / "0") with the value Zero, store in Register 0
+		This clears RAM, and makes sure that it is empty.
+
+> 00000000 000 00000 00011 00000 010000
+	ADD Register 0 with the value stored in Register Three, store in Register 0
+		This stores the final result in address 0x00 in RAM.
+
+The Full Program Below:
+
+000000000000000000011000000100000000000001100000000000000000000000000001110000110101000011000000000000000100001100001000110100000000000001000010000110001001000000000000011000010000000000000101
