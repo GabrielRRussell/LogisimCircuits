@@ -1,5 +1,4 @@
 # Project Savannah
-__________________
 
 Project Savannah is a custom CPU that I built in Logisim. It's designed to run simple code, and is planned to have a whole reach of features. For those who don't know what Logisim is, it's a program that allows you to design custom circuitry. Many people design their own computers and hardware inside of it. My goal is to build a custom 32 Bit processor. 
 
@@ -34,7 +33,7 @@ To Be Completed:
 > More Operations (ADD/SUB/LS, etc)
 
 > Logisim Evolution version
-_____________________________
+
 # How to Use
 
 How do you use this thing? It's pretty easy: Just download the .circ file included, and open it in Logisim. It should do all of the work for you. Click on Project, and reset the simulation. Use the "Poke" tool, and Turn on the PC. The JMP register should be set to Zero, so you should also enable, then disable that. You can also clear the screen if you wish.
@@ -52,7 +51,7 @@ As for programming for Project Savannah, the instructions are in the file labell
 The expansion manual is kind of a document on how I'm planning on implementing Expansion / Networking into the CPU. The end goal is networking, plugging in other cards / programs, etc. That's a far way away, but I've already dedicated some registers to it. Since they aren't currently in use, feel free to use them as you wish, at least until it's implemented.
 
 I'm always looking for new improvements to Project Savannah. At the time of writing this, I am currently designing revision two, which will have improved functionality and a larger set of instructions.
-______________________________
+
 # What Next?
 
 I'm currently designing a more robust language to go along with it. More operations, including logic, maths, etc. I wish to have 7 bit addressable memory, and more registers. 
