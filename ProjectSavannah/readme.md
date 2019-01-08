@@ -1,7 +1,9 @@
 # Project Savannah
 __________________
 
-Project Savannah is a custom CPU that I built in Logisim. It's designed to run simple code, and is planned to have a whole reach of features.
+Project Savannah is a custom CPU that I built in Logisim. It's designed to run simple code, and is planned to have a whole reach of features. For those who don't know what Logisim is, it's a program that allows you to design custom circuitry. Many people design their own computers and hardware inside of it. My goal is to build a custom 32 Bit processor. 
+
+Repo Link: https://github.com/GabrielRRussell/LogisimCircuits/tree/master/ProjectSavannah
 
 Completed Features:
 
@@ -13,13 +15,13 @@ Completed Features:
 
 > Multi-Program Loading 
 
-> A power cord, if you're into that.
+> Power Cord for Completeness
 
 > A Pretty Looking Box
 
 To Be Completed:
 
-> A program that is actually useful
+> More Programs
 
 > Interfacing with devices 
 
@@ -27,12 +29,11 @@ To Be Completed:
 
 > More Demos
 
-> 64 bit???
+> Larger Instructions possibly
 
 > More Operations (ADD/SUB/LS, etc)
 
-> Probably something else I'm missing.
-
+> Logisim Evolution version
 _____________________________
 # How to Use
 
@@ -44,10 +45,28 @@ Manual Jump is designed to be a debugging type of thing. In case you are creatin
 
 Program Select is basically an easy way of loading multiple programs. I recommend keeping at least ONE of the programs set to being empty, so that you don't have to deal with swapping instructions inbetween programs. 
 
-The On/Off cord/button is pretty useful, actually. If I wired it up correctly (which honestly I have no clue, I kind of rushed uploading this), then it should clear all the registers, and RAM values. It won't erase your programs stored in ROM, so no worries there. 
+The On/Off cord/button is very useful. It clears RAM storage, and all available registers on the same tick. It does not clear ROM though, so you can keep your programs safe.
 
 As for programming for Project Savannah, the instructions are in the file labelled "codemanual.txt". That document will give you some insight on how everything is done. It's not really meant to be a public release though, so it might look a bit strange.
 
 The expansion manual is kind of a document on how I'm planning on implementing Expansion / Networking into the CPU. The end goal is networking, plugging in other cards / programs, etc. That's a far way away, but I've already dedicated some registers to it. Since they aren't currently in use, feel free to use them as you wish, at least until it's implemented.
 
-I've also included a program called "JumpTilTen." It's not working at the moment. I think I broke something. But it's just some example code that's documented in the Code Manual. Its job is to count a register to ten, and then place it into RAM. I wrote it as a way to do some basic math and test if registers were being counted properly.
+I'm always looking for new improvements to Project Savannah. At the time of writing this, I am currently designing revision two, which will have improved functionality and a larger set of instructions.
+______________________________
+# What Next?
+
+I'm currently designing a more robust language to go along with it. More operations, including logic, maths, etc. I wish to have 7 bit addressable memory, and more registers. 
+
+Some features that I'm planning on including are...
+
+1) Code Execution from RAM
+
+2) Protected Memory
+
+3) More extensible inputs and outputs
+
+4) Multiple Outside LED's, including a "Program Swap" LED, a "R/W" LED, and maybe some more fancy stuff.
+
+5) Multiple RAM Components
+
+6) Proper Storage
